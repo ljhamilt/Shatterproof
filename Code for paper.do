@@ -1,3 +1,9 @@
+****Project: Addiction Stigma
+****Author:  Lucas Hamilton
+****Date:    2022/04/30
+****Purpose: Code for paper on HCP and Gen Pop within 2021 Shatterproof Addiction Stigma Index
+
+
 ssc install fre
 
 
