@@ -237,6 +237,7 @@ graph export "\\Client\F$\krendl lab\Lucas\Stigma & SUDs\Healthcare Professional
 **#4 Hypothesis 2 & 3
 *****************************
 svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof##know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
+test (1.a=2.a) (1.a=3.a), mtest(sidak)
 margins know#hprof
 marginsplot, xdim(hprof know) recast(bar)
 margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
