@@ -217,6 +217,8 @@ margins know#hprof
 marginsplot, xdim(hprof) recast(bar) by(know) ti("") ytitle("Bad Character Attributions") ylabel(-.4 (.2) .4) xtitle("") xlabel() plotop(barw(.8) fintensity(inten30)) ciop(msize(vlarge) lw(medthick)) name(fig1a, replace)
 
 svy: reg stdwayraise hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
+testparm know#hprof, equal
+pwcompare know#hprof, effect mcompare(bonferroni)
 margins know#hprof
 marginsplot, xdim(hprof) recast(bar) by(know) ti("") ytitle("Way Raised Attributions") ylabel(-.4 (.2) .4) xtitle("") xlabel() plotop(barw(.8) fintensity(inten30)) ciop(msize(vlarge) lw(medthick)) name(fig1b, replace)
 
