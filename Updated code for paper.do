@@ -201,11 +201,19 @@ foreach x in charactr wayraise imbalnce genetics socdistgss prejudice untreatabl
 	egen std`x' = std(`x')
 }
 
-svyset wt
 
 *****************************
-**#3 Hypothesis 1
+**#3 Exploratory HCP Analysis
 *****************************
+svyset HCP_wt
+
+anova stdsocdistgss vigactive##dx##S2
+
+*****************************
+**#4 Hypothesis 1
+*****************************
+svyset wt
+
 svy: reg stdcharactr hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 testparm know#hprof, equal
 pwcompare know#hprof, effects mcompare(bonferroni)
@@ -267,7 +275,7 @@ graph combine close1 close2 close3 close4, name(close_combined, replace)
 
 
 *****************************
-**#4 Hypothesis 2 & 3
+**#5 Hypothesis 2 & 3
 *****************************
 svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof##know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 margins know#hprof
