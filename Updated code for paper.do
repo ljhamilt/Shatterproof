@@ -1,42 +1,5 @@
 ssc install fre
 
-
-Valid   291020 Dentist                             |         12       0.15       1.31       1.31
-        291040 Optometrist                         |          4       0.05       0.44       1.75
-        291050 Pharmacist                          |         34       0.43       3.72       5.47
-        291060 Physician or surgeon                |         48       0.61       5.25      10.72
-        291070 Physician Assistant                 |         12       0.15       1.31      12.04
-        291120 Therapist                           |         92       1.16      10.07      22.10
-        291130 Veterinarian                        |          4       0.05       0.44      22.54
-        291140 Registered Nurse                    |        280       3.54      30.63      53.17
-        291170 Nurse Practitioner                  |         32       0.40       3.50      56.67
-        291190 Other Health Care Practitioner      |         97       1.23      10.61      67.29
-        292010 Clinical Laboratory Technologist or |         13       0.16       1.42      68.71
-               Technician                          |                                            
-        292020 Dental Hygienist                    |         20       0.25       2.19      70.90
-        292030 Diagnostic Related Technologist or  |         12       0.15       1.31      72.21
-               Technician                          |                                            
-        292040 Emergency Medical Technician or     |         23       0.29       2.52      74.73
-               Paramedic                           |                                            
-        292050 Health Practitioner Support         |          5       0.06       0.55      75.27
-               Technologist or Technician          |                                            
-        292060 Licensed Practical or Licensed      |          4       0.05       0.44      75.71
-               Vocational Nurse                    |                                            
-        292070 Medical Records or Health           |          2       0.03       0.22      75.93
-               Information Technician              |                                            
-        292090 Other Health Technologist or        |         28       0.35       3.06      78.99
-               Technician                          |                                            
-        311010 Nursing, Psychiatric, or Home       |         79       1.00       8.64      87.64
-               Health Aide                         |                                            
-        312010 Occupational or Physical Therapy    |          8       0.10       0.88      88.51
-               Assistant or Aide                   |                                            
-        319091 Dental Assistant                    |         22       0.28       2.41      90.92
-        319092 Medical Assistant                   |         25       0.32       2.74      93.65
-        319094 Medical Transcriptionist            |          1       0.01       0.11      93.76
-        319099 Other Healthcare Support Worker     |         57       0.72       6.24     100.00
-
-
-
 *****************************
 **#1 Preparing 2021 SASI data
 *******************************
