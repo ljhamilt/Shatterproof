@@ -204,15 +204,9 @@ foreach x in charactr wayraise imbalnce genetics socdistgss prejudice untreatabl
 
 
 *****************************
-**#3 Exploratory HCP Analysis
+**#3 Hypothesis 1
 *****************************
-svyset HCP_wt
 
-anova stdsocdistgss vigactive##dx##S2
-
-*****************************
-**#4 Hypothesis 1
-*****************************
 svyset wt
 
 svy: reg stdcharactr hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
@@ -232,7 +226,7 @@ anova p_wayraise know##hprof
 margins know#hprof
 marginsplot, recast(bar) by(know) ytitle("Way Raised Attributions") ylabel(-.4 (.2) .4) xtitle("") plotop(barw(.8) fintensity(inten30)) ciop(msize(vlarge) lw(medthick)) name(fig1b, replace)
 
-svy: reg stdimbalnce hprof#know#i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
+svy: reg stdimbalnce hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 testparm know#hprof, equal
 pwcompare know#hprof, effects mcompare(bonferroni)
 test 0.hprof#1.know - 0.hprof#0.know = .124
@@ -252,7 +246,7 @@ marginsplot, xdim(hprof) recast(bar) by(know) ti("") ytitle("Genetic Attribution
 
 *create composite Figure 1
 graph combine fig1a fig1b fig1c fig1d, row(2) col(2)
-graph export "\\Client\F$\krendl lab\Lucas\Stigma & SUDs\Healthcare Professionals\Figure 1.png", as(png) name("Graph")
+graph export "\\Client\F$\krendl lab\Lucas\Stigma & SUDs\Healthcare Professionals\Figure 1.png", as(png) name("Figure 1")
 
 ****closeness swapped in for knowing
 svy: reg stdcharactr hprof#c.close i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
@@ -276,27 +270,50 @@ graph combine close1 close2 close3 close4, name(close_combined, replace)
 
 
 *****************************
-**#5 Hypothesis 2 & 3
+**#4 Hypothesis 2
 *****************************
-svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof##know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
-margins know#hprof
-marginsplot, xdim(hprof know) recast(bar)
+svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
+predict p_socdist
+test stdcharactr=stdwayraise
+test stdgenetics=stdimbalnce
 margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
 marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8)) name(fig2a, replace)
 
-svy: reg stdprejudice stdcharactr stdwayraise stdimbalnce stdgenetics hprof know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
-margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
-marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8)) name(fig2b, replace)
+xi: rego stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics (detail) \ i.hprof i.know (detail) \ i.vigactive i.dx (detail) \ female i.racecat age ppeduc5 ppinc7 (detail), vce(robust)
 
-svy: reg stduntreatable stdcharactr stdwayraise stdimbalnce stdgenetics hprof know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
-margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
-marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8))  name(fig2c, replace)
 
 svy: reg stdstructural stdcharactr stdwayraise stdimbalnce stdgenetics hprof know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
+predict p_struct
+test stdcharactr=stdwayraise
+test stdgenetics=stdimbalnce
 margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
-marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8))  name(fig2d, replace)
-margins know#hprof
-marginsplot, xdim(hprof know) recast(bar)
+marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8))  name(fig2b, replace)
+
+xi: rego stdstructural stdcharactr stdwayraise stdimbalnce stdgenetics (detail) \ i.hprof i.know (detail) \ i.vigactive i.dx (detail) \ female i.racecat age ppeduc5 ppinc7 (detail), vce(robust)
 
 **create composite Figure 2
-graph combine fig2a fig2b fig2c fig2d, row(2) col(2)
+graph combine fig2a fig2b, name(Figure 2, replace)
+
+
+*****************************
+**#5 Exploratory HCP Analysis
+*****************************
+gen hprof_grp = S2*hprof
+recode hprof_grp (0=.)
+recode hprof_grp (291120 = 1) (291140 292060=2) (292040=3) (291060 291170=4) (291050 =5) (291070 292020 319091 319092=6) (311010 312010=7) (291020 291190 =8)
+lab def hprof_grp 1 "Therapists" 2 "Registered Nurse" 3 "EMTs" 4 "Physician & Nurse Practitioners" 5 "Pharmacists" 6 "Assistants" 7 "Health Aides" 8 "Other"
+lab val hprof_grp hprof_grp
+
+anova p_socdist hprof_grp
+anova p_struct hprof_grp
+
+gen EMT = hprof_grp
+recode EMT (1 2 4 5 6 7 8 = 0) (3=1)
+anova p_struct EMT##vigactive
+margins EMT
+anova p_socdist EMT##vigactive
+margins EMT
+generate hprof_noEMT = hprof
+replace hprof_noEMT = 0 if hprof_grp ==3
+svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof_noEMT#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
+svy: reg stdstructural stdcharactr stdwayraise stdimbalnce stdgenetics hprof_noEMT#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
