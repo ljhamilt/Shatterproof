@@ -1,4 +1,6 @@
 ssc install fre
+net from http://www.marco-sunder.de/stata/
+net install rego
 
 *****************************
 **#1 Preparing 2021 SASI data
