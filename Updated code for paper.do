@@ -207,7 +207,8 @@ foreach x in charactr wayraise imbalnce genetics socdistgss prejudice untreatabl
 **#3 Hypothesis 1
 *****************************
 
-svyset wt
+svyset [pw=wt]
+// not svyset wt
 
 svy: reg stdcharactr hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 testparm know#hprof, equal
