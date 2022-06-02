@@ -377,3 +377,57 @@ set pformat %5.4f
 			  _b[stdsocdistgss:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
 	}	  
 
+
+// STRUCTURAL STIGMA:
+
+* hprof == 0 
+xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
+	(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdstructural) ///
+	(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
+	if hprof==0
+	
+	estat teffects, compact nodirect 
+	// total effect of hprof on stdstructural: -.0580774 (N.S.)
+	// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
+	
+	// indirect effect of each attribution:
+	foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
+	
+		disp "                     "
+		disp "                     "
+		disp "******** `var' ******"
+		nlcom _b[stdstructural:`var']*_b[`var':know] // indirect effect of each attribution
+		
+		nlcom (_b[stdstructural:`var']*_b[`var':know])/ ///
+			  (_b[stdstructural:stdcharactr]*_b[stdcharactr:know] + ///
+			  _b[stdstructural:stdwayraise]*_b[stdwayraise:know] + ///
+			  _b[stdstructural:stdimbalnce]*_b[stdimbalnce:know] + ///
+			  _b[stdstructural:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
+	}	  
+	
+* hprof == 1
+set pformat %5.4f
+	xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
+	(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdstructural) ///
+	(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
+	if hprof==1
+	
+	estat teffects, compact nodirect 
+	// total effect of hprof on stdstructural: -.0580774 (N.S.)
+	// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
+	
+	// indirect effect of each attribution:
+	foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
+	
+		disp "                     "
+		disp "                     "
+		disp "******** `var' ******"
+		nlcom _b[stdstructural:`var']*_b[`var':know] // indirect effect of each attribution
+		
+		nlcom (_b[stdstructural:`var']*_b[`var':know])/ ///
+			  (_b[stdstructural:stdcharactr]*_b[stdcharactr:know] + ///
+			  _b[stdstructural:stdwayraise]*_b[stdwayraise:know] + ///
+			  _b[stdstructural:stdimbalnce]*_b[stdimbalnce:know] + ///
+			  _b[stdstructural:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
+	}	  
+	
