@@ -319,42 +319,61 @@ replace hprof_noEMT = 0 if hprof_grp ==3
 svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof_noEMT#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 svy: reg stdstructural stdcharactr stdwayraise stdimbalnce stdgenetics hprof_noEMT#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 
+	
+***************************************
+**#6 Structural Equation Modeling
+***************************************
 
-xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) ///
-(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdsocdistgss) ///
-(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) if hprof==0
-estat teffects, compact nodirect 
-// total effect of hprof on stdsocdistgss: -.0580774 (N.S.)
-// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
-// indirect effect of each attribution:
-foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
-disp "                     "
-disp "                     "
-disp "******** `var' ******"
-nlcom _b[stdsocdistgss:`var']*_b[`var':know] // indirect effect of each attribution
-nlcom (_b[stdsocdistgss:`var']*_b[`var':know])/ ///
-  (_b[stdsocdistgss:stdcharactr]*_b[stdcharactr:know] + ///
-  _b[stdsocdistgss:stdwayraise]*_b[stdwayraise:know] + ///
-  _b[stdsocdistgss:stdimbalnce]*_b[stdimbalnce:know] + ///
-  _b[stdso
-  
+// SOCIAL DISTANCE: 
 
+* hprof == 0 
 xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) ///
-(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdsocdistgss) ///
-(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) if hprof==1
-estat teffects, compact nodirect 
-// total effect of hprof on stdsocdistgss: -.0580774 (N.S.)
-// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
-// indirect effect of each attribution:
-foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
-disp "                     "
-disp "                     "
-disp "******** `var' ******"
-nlcom _b[stdsocdistgss:`var']*_b[`var':know] // indirect effect of each attribution
-nlcom (_b[stdsocdistgss:`var']*_b[`var':know])/ ///
-  (_b[stdsocdistgss:stdcharactr]*_b[stdcharactr:know] + ///
-  _b[stdsocdistgss:stdwayraise]*_b[stdwayraise:know] + ///
-  _b[stdsocdistgss:stdimbalnce]*_b[stdimbalnce:know] + ///
-  _b[stdsocdistgss:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect   
-}cdistgss:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect   
-}
+	(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdsocdistgss) ///
+	(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) ///
+	if hprof==0
+	
+	estat teffects, compact  
+	// total effect of hprof on stdsocdistgss: -.0580774 (N.S.)
+	// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
+	
+	// indirect effect of each attribution:
+	foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
+	
+		disp "                     "
+		disp "                     "
+		disp "******** `var' ******"
+		nlcom _b[stdsocdistgss:`var']*_b[`var':know] // indirect effect of each attribution
+		
+		nlcom (_b[stdsocdistgss:`var']*_b[`var':know])/ ///
+			  (_b[stdsocdistgss:stdcharactr]*_b[stdcharactr:know] + ///
+			  _b[stdsocdistgss:stdwayraise]*_b[stdwayraise:know] + ///
+			  _b[stdsocdistgss:stdimbalnce]*_b[stdimbalnce:know] + ///
+			  _b[stdsocdistgss:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
+	}	  
+	
+* hprof == 1
+set pformat %5.4f
+	xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) ///
+	(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdsocdistgss) ///
+	(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) ///
+	if hprof==1
+	
+	estat teffects, compact  
+	// total effect of hprof on stdsocdistgss: -.0580774 (N.S.)
+	// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
+	
+	// indirect effect of each attribution:
+	foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
+	
+		disp "                     "
+		disp "                     "
+		disp "******** `var' ******"
+		nlcom _b[stdsocdistgss:`var']*_b[`var':know] // indirect effect of each attribution
+		
+		nlcom (_b[stdsocdistgss:`var']*_b[`var':know])/ ///
+			  (_b[stdsocdistgss:stdcharactr]*_b[stdcharactr:know] + ///
+			  _b[stdsocdistgss:stdwayraise]*_b[stdwayraise:know] + ///
+			  _b[stdsocdistgss:stdimbalnce]*_b[stdimbalnce:know] + ///
+			  _b[stdsocdistgss:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
+	}	  
+
