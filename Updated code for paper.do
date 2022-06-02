@@ -431,3 +431,37 @@ set pformat %5.4f
 			  _b[stdstructural:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
 	}	  
 	
+
+
+**************************************
+**#7 Comparing Effect Sizes
+***************************************
+// SOCIAL DISTANCE		
+eststo m1: svy: reg stdsocdistgss  know stdcharactr  vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==0
+eststo m2: svy: reg stdsocdistgss  know vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==0 & e(sample)
+suest m1 m2
+lincom [m1]know - [m2]know
+
+eststo m3: svy: reg stdsocdistgss  know stdcharactr  vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==1
+eststo m4: svy: reg stdsocdistgss  know vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==1 & e(sample)
+suest m3 m4
+lincom [m3]know - [m4]know	  
+			  
+suest m1 m2 m3 m4
+lincom ([m1]know - [m2]know) - ([m3]know - [m4]know) 
+	// conditioning on the other 3 causal attributions, the change in effect size on "know" is significantly larger for hprofs (p<.05)
+  
+// STRUCTURAL STIGMA
+eststo s1: svy: reg stdstructural  know stdcharactr  vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==0
+eststo s2: svy: reg stdstructural  know vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==0 & e(sample)
+suest s1 s2
+lincom [s1]know - [s2]know
+
+eststo s3: svy: reg stdstructural  know stdcharactr  vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==1
+eststo s4: svy: reg stdstructural  know vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==1 & e(sample)
+suest s3 s4
+lincom [s3]know - [s4]know	  
+			  
+suest s1 s2 s3 s4
+lincom ([s1]know - [s2]know) - ([s3]know - [s4]know) 
+	// conditioning on the other 3 causal attributions, the change in effect size on "know" is significantly larger for hprofs (p<.006)
