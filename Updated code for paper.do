@@ -26,20 +26,6 @@ lab def rev 1 "Least likely" 4 "Most likely"
 label val charactr-genetics rev
 fre Q1_CHARACTR-Q5_GENETICS charactr-genetics
 
-** Treatment effectiveness from GSS (did not recode, scale as it stands is 1=very likely, 4 = not at all likely; drop refusals)
-clonevar imprvtrt=Q10_IMPRVTRT
-clonevar hlthylife=Q11_HLTHYLIFE
-clonevar prformjob=Q12_PRFORMJOB
-        
-recode imprvtrt-prformjob (-1=.)
-fre Q10_IMPRVTRT-Q12_PRFORMJOB imprvtrt-prformjob
-
-factor imprvtrt-prformjob
-alpha imprvtrt-prformjob
-
-egen untreatable=rowmean(imprvtrt-prformjob)
-lab var untreatable "Addiction is untreatable, HI=more stigma"
-
 * Social Distance from GSS 2018 but note friend question is modified (1=definitely willing, 4 = definitely unwilling; drop refusals)
 clonevar vignei=Q15_VIGNEI
 clonevar vigsoc=Q16_VIGSOC
@@ -55,24 +41,6 @@ alpha vignei-vigfrnd
 
 egen socdistgss=rowmean(vignei-vigfrnd)
 lab var socdistgss "Social distance scale (GSS), hi=more stigma"
-
-* Traditional prejudice (unpredictable, violent to others, violent to self, trustworthy, competent; recode so higher number = more prejudice)
-clonevar unpredict=Q21_MHUNSURE
-clonevar hurtoth=Q22_HURTOTH
-clonevar hurtself=Q23_HURTSELF
-clonevar trust=Q24_MHTRUST
-clonevar competent=Q25_MHCOMP
-
-recode unpredict-competent (-1=.)
-recode unpredict hurtoth hurtself (1=4)(2=3)(3=2)(1=4)
-lab def agree 1 "Strongly disagree" 4 "Strongly agree"
-label val unpredict hurtoth hurtself agree
-
-fre Q21_MHUNSURE-Q25_MHCOMP unpredict-competent 
-factor unpredict-competent
-alpha unpredict-competent
-egen prejudice=rowmean(unpredict-competent)
-lab var prejudice "Traditional prejudice scale, hi=more prejudice"
 
 ** Structural stigma questions: employment, healthcare, school, housing
 clonevar ppjob1=Q35_PPJOB1
@@ -95,54 +63,16 @@ alpha ppjob1-crime
 alpha ppjob2-ppschl crime,item
 egen structural=rowmean(ppjob2-ppschl crime)
 
-
 * Personal experience with SUD
 clonevar know=Q50_KNOW1
         *Recode to drop refusals
         recode know (-1=.)(2=0)(3=.)
 lab var know "Knows someone with vignette problem"
 
-
 ** Create new vignette categories
 gen vigactive=xvignettes
 recode vigactive (1/2=1)(3/4=1)(5=1)(6/7=0)(8/9=0)(10=0)
 lab var vigactive "Vignette - 1=active, 0=recovery"
-
-gen vigmed=xvignettes
-recode vigmed (1=1)(6=1)(5=0)(10=0)(2=.)(3=.)(4=.)(7=.)(8=.)(9=.)
-lab var vigmed "Vignette - 1=Medical prescription onset, 0=Party prescription onset"
-
-gen vigrx=xvignettes
-recode vigrx (2=0)(5=1)(7=0)(10=1)(1=1)(3=.)(4=.)(6=1)(7=.)(8=.)(9=.)
-lab var vigrx "Vignette - 1= Rx opioids, 0=Heroin"
-
-gen oud=xvignettes
- recode oud (1=1)(2=1)(3=0)(4=0)(5=1)(6=1)(7=1)(8=0)(9=0)(10=1)
-lab var oud " Vignette - Any opioid addiction"
-
-gen poud=xvignettes
-recode poud (1=1)(2=0)(3=0)(4=0)(5=1)(6=1)(7=0)(8=0)(9=0)(10=1)
-lab var poud " Vignette - Prescription opioid addiction"
-
-gen hud=xvignettes
-recode hud (1=0)(2=1)(3=0)(4=0)(5=0)(6=0)(7=1)(8=0)(9=0)(10=0)
-lab var hud " Vignette - Heroin addiction"
-
-gen mud=xvignettes
-recode mud (1=0)(2=0)(3=1)(4=0)(5=0)(6=0)(7=0)(8=1)(9=0)(10=0)
-lab var mud "Vignette - Methamphetamine addiction"
-
-gen aud=xvignettes
-recode aud (1=0)(2=0)(3=0)(4=1)(5=0)(6=0)(7=0)(8=0)(9=1)(10=0)
-lab var aud "Vignette - Alcohol addiction"
-
-gen poudmed=xvignettes
-recode poudmed (1=1)(2=0)(3=0)(4=0)(5=0)(6=1)(7=0)(8=0)(9=0)(10=0)
-lab var poudmed " Vignette - Prescription opioid addiction, pain"
-
-gen poudparty=xvignettes
-recode poudparty (1=0)(2=0)(3=0)(4=0)(5=1)(6=0)(7=0)(8=0)(9=0)(10=1)
-lab var poudparty " Vignette - Prescription opioid addiction, party"
 
 gen dx=.
 replace dx=1 if aud==1
@@ -152,18 +82,6 @@ replace dx=4 if mud==1
 lab def dx 1 "Alcohol" 2 "Rx Opioids" 3 "Heroin" 4 "Meth"
 lab val dx dx
 lab var dx "Vignette diagnosis"
-tab xvignette, gen(vig)
-
-lab var vig1 "Vignette - Rx opioids, active, medical onset"
-lab var vig2 "Vignette - Heroin, active"
-lab var vig3 "Vignette - Meth, active"
-lab var vig4 "Vignette - Alcohol, active"
-lab var vig5 "Vignette - Rx opioids, active, party onset"
-lab var vig6 "Vignette - Rx opioids, MOUD recovery, medical onset"
-lab var vig7 "Vignette - Heroin, recovery"
-lab var vig8 "Vignette - Meth, recovery"
-lab var vig9 "Vignette - Alcohol, recovery"
-lab var vig10 "Vignette - Rx opioids, unspecified recovery, medical onset"
 
 ** Define populations (Health professionals)
 gen hprof=0
