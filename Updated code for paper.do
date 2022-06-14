@@ -95,9 +95,8 @@ lab val hprof hprof
 lab def know 0 "No Contact" 1 "Know Someone" 
 lab val know know
 
-
 *****************************
-**#2 Code for paper
+**#2 Demographics
 *****************************
 
 tabulate S2
