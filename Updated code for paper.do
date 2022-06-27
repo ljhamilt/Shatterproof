@@ -1,6 +1,4 @@
 ssc install fre
-net from http://www.marco-sunder.de/stata/
-net install rego
 
 *****************************
 **#1 Preparing 2021 SASI data
@@ -125,7 +123,6 @@ foreach x in charactr wayraise imbalnce genetics socdistgss prejudice untreatabl
 *****************************
 
 svyset [pw=wt]
-// not svyset wt
 
 svy: reg stdcharactr hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 testparm know#hprof, equal
@@ -188,7 +185,7 @@ graph combine close1 close2 close3 close4, name(close_combined, replace)
 
 
 *****************************
-**#4 Hypothesis 2
+**#4 Hypothesis 2A+B
 *****************************
 svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
 predict p_socdist
@@ -197,51 +194,10 @@ test stdgenetics=stdimbalnce
 margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
 marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8)) name(fig2a, replace)
 
-xi: rego stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics (detail) \ i.hprof i.know (detail) \ i.vigactive i.dx (detail) \ female i.racecat age ppeduc5 ppinc7 (detail), vce(robust)
-
-
-svy: reg stdstructural stdcharactr stdwayraise stdimbalnce stdgenetics hprof know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
-predict p_struct
-test stdcharactr=stdwayraise
-test stdgenetics=stdimbalnce
-margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
-marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8))  name(fig2b, replace)
-
-xi: rego stdstructural stdcharactr stdwayraise stdimbalnce stdgenetics (detail) \ i.hprof i.know (detail) \ i.vigactive i.dx (detail) \ female i.racecat age ppeduc5 ppinc7 (detail), vce(robust)
-
-**create composite Figure 2
-graph combine fig2a fig2b, name(Figure 2, replace)
-
-
-*****************************
-**#5 Exploratory HCP Analysis
-*****************************
-gen hprof_grp = S2*hprof
-recode hprof_grp (0=.)
-recode hprof_grp (291120 = 1) (291140 292060=2) (292040=3) (291060 291170=4) (291050 =5) (291070 292020 319091 319092=6) (311010 312010=7) (291020 291190 =8)
-lab def hprof_grp 1 "Therapists" 2 "Registered Nurse" 3 "EMTs" 4 "Physician & Nurse Practitioners" 5 "Pharmacists" 6 "Assistants" 7 "Health Aides" 8 "Other"
-lab val hprof_grp hprof_grp
-
-anova p_socdist hprof_grp
-anova p_struct hprof_grp
-
-gen EMT = hprof_grp
-recode EMT (1 2 4 5 6 7 8 = 0) (3=1)
-anova p_struct EMT##vigactive
-margins EMT
-anova p_socdist EMT##vigactive
-margins EMT
-generate hprof_noEMT = hprof
-replace hprof_noEMT = 0 if hprof_grp ==3
-svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof_noEMT#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
-svy: reg stdstructural stdcharactr stdwayraise stdimbalnce stdgenetics hprof_noEMT#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
-
 	
 ***************************************
-**#6 Structural Equation Modeling
+**#5 Hypothesis 2C - SEM
 ***************************************
-
-// SOCIAL DISTANCE: 
 
 * hprof == 0 
 xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdsocdistgss) ///
@@ -295,63 +251,8 @@ set pformat %5.4f
 	}	  
 
 
-// STRUCTURAL STIGMA:
-
-* hprof == 0 
-xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
-	(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdstructural) ///
-	(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
-	if hprof==0
-	
-	estat teffects, compact nodirect 
-	// total effect of hprof on stdstructural: -.0580774 (N.S.)
-	// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
-	
-	// indirect effect of each attribution:
-	foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
-	
-		disp "                     "
-		disp "                     "
-		disp "******** `var' ******"
-		nlcom _b[stdstructural:`var']*_b[`var':know] // indirect effect of each attribution
-		
-		nlcom (_b[stdstructural:`var']*_b[`var':know])/ ///
-			  (_b[stdstructural:stdcharactr]*_b[stdcharactr:know] + ///
-			  _b[stdstructural:stdwayraise]*_b[stdwayraise:know] + ///
-			  _b[stdstructural:stdimbalnce]*_b[stdimbalnce:know] + ///
-			  _b[stdstructural:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
-	}	  
-	
-* hprof == 1
-set pformat %5.4f
-	xi: svy: sem (know -> stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
-	(stdcharactr stdwayraise stdimbalnce stdgenetics -> stdstructural) ///
-	(vigactive i.dx female i.racecat age ppeduc5 ppinc7 -> know stdcharactr stdwayraise stdimbalnce stdgenetics stdstructural) ///
-	if hprof==1
-	
-	estat teffects, compact nodirect 
-	// total effect of hprof on stdstructural: -.0580774 (N.S.)
-	// total indirect effect: -.0393042 (p=.001), also calculated by hand via the denominator in the nlcom below: 
-	
-	// indirect effect of each attribution:
-	foreach var in stdcharactr stdwayraise stdimbalnce stdgenetics {
-	
-		disp "                     "
-		disp "                     "
-		disp "******** `var' ******"
-		nlcom _b[stdstructural:`var']*_b[`var':know] // indirect effect of each attribution
-		
-		nlcom (_b[stdstructural:`var']*_b[`var':know])/ ///
-			  (_b[stdstructural:stdcharactr]*_b[stdcharactr:know] + ///
-			  _b[stdstructural:stdwayraise]*_b[stdwayraise:know] + ///
-			  _b[stdstructural:stdimbalnce]*_b[stdimbalnce:know] + ///
-			  _b[stdstructural:stdgenetics]*_b[stdgenetics:know]) // contribution of each mediator to the indirect effect 	  
-	}	  
-	
-
-
 **************************************
-**#7 Comparing Effect Sizes
+**#6 Hypothesis 2C - Comparing Effects
 ***************************************
 // SOCIAL DISTANCE		
 eststo m1: svy: reg stdsocdistgss  know stdcharactr  vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==0
@@ -367,18 +268,27 @@ lincom [m3]know - [m4]know
 suest m1 m2 m3 m4
 lincom ([m1]know - [m2]know) - ([m3]know - [m4]know) 
 	// conditioning on the other 3 causal attributions, the change in effect size on "know" is significantly larger for hprofs (p<.05)
-  
-// STRUCTURAL STIGMA
-eststo s1: svy: reg stdstructural  know stdcharactr  vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==0
-eststo s2: svy: reg stdstructural  know vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==0 & e(sample)
-suest s1 s2
-lincom [s1]know - [s2]know
+	
+	
+*****************************
+**#7 Exploratory HCP Analysis
+*****************************
+gen hprof_grp = S2*hprof
+recode hprof_grp (0=.)
+recode hprof_grp (291120 = 1) (291140 292060=2) (292040=3) (291060 291170=4) (291050 =5) (291070 292020 319091 319092=6) (311010 312010=7) (291020 291190 =8)
+lab def hprof_grp 1 "Therapists" 2 "Registered Nurse" 3 "EMTs" 4 "Physician & Nurse Practitioners" 5 "Pharmacists" 6 "Assistants" 7 "Health Aides" 8 "Other"
+lab val hprof_grp hprof_grp
 
-eststo s3: svy: reg stdstructural  know stdcharactr  vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==1
-eststo s4: svy: reg stdstructural  know vigactive i.dx female i.racecat age ppeduc5 ppinc7 stdwayraise stdimbalnce stdgenetics if hprof==1 & e(sample)
-suest s3 s4
-lincom [s3]know - [s4]know	  
-			  
-suest s1 s2 s3 s4
-lincom ([s1]know - [s2]know) - ([s3]know - [s4]know) 
-	// conditioning on the other 3 causal attributions, the change in effect size on "know" is significantly larger for hprofs (p<.006)
+anova p_socdist hprof_grp
+anova p_struct hprof_grp
+
+gen EMT = hprof_grp
+recode EMT (1 2 4 5 6 7 8 = 0) (3=1)
+anova p_struct EMT##vigactive
+margins EMT
+anova p_socdist EMT##vigactive
+margins EMT
+generate hprof_noEMT = hprof
+replace hprof_noEMT = 0 if hprof_grp ==3
+svy: reg stdsocdistgss stdcharactr stdwayraise stdimbalnce stdgenetics hprof_noEMT#know i.vigactive i.dx female i.racecat age ppeduc5 ppinc
+ 
