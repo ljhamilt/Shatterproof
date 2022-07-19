@@ -109,11 +109,12 @@ ttest close if know > 0, by(hprof)
 
 gen wt=Genpop_wt
 replace wt=HCP_wt if xsud==3
-replace wt=ct_wt if xsud==2
-replace wt=SUD_wt if xsud==4 
-lab var wt "Sampling weights for combining general population with oversamples"
+lab var wt "Sampling weights for combine general population with HCP oversamples"
 
-foreach x in charactr wayraise imbalnce genetics socdistgss prejudice untreatable structural {
+drop if xsud ==2
+drop if xsud ==4
+
+foreach x in charactr wayraise imbalnce genetics socdistgss {
 	egen std`x' = std(`x')
 }
 
