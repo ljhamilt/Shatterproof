@@ -96,6 +96,12 @@ lab val know know
 *****************************
 **#2 Demographics
 *****************************
+gen wt=Genpop_wt
+replace wt=HCP_wt if xsud==3
+lab var wt "Sampling weights for combine general population with HCP oversamples"
+
+drop if xsud ==2
+drop if xsud ==4
 
 tabulate S2
 tabulate S2 if hprof > 0
@@ -107,12 +113,6 @@ by hprof, sort : summarize age
 tabulate hprof know, chi2
 ttest close if know > 0, by(hprof)
 
-gen wt=Genpop_wt
-replace wt=HCP_wt if xsud==3
-lab var wt "Sampling weights for combine general population with HCP oversamples"
-
-drop if xsud ==2
-drop if xsud ==4
 
 foreach x in charactr wayraise imbalnce genetics socdistgss {
 	egen std`x' = std(`x')
