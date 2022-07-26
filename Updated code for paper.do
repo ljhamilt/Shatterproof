@@ -195,6 +195,8 @@ test stdgenetics=stdimbalnce
 margins, at(stdcharactr=(-1 -.5 0 .5 1)) at(stdwayraise=(-1 -.5 0 .5 1)) at(stdimbalnce=(-1 -.5 0 .5 1)) at(stdgenetics=(-1 -.5 0 .5 1))
 marginsplot, xdim(stdcharactr stdwayraise stdimbalnce stdgenetics, allsim nosep) recast(bar) xlabel(5.5 10.5 15.5, grid) ti("") plotopts(barw(.8)) name(fig2a, replace)
 
+svy: reg stdsocdistgss hprof##know i.vigactive i.dx female i.racecat age ppeduc5 ppinc7
+
 	
 ***************************************
 **#5 Hypothesis 2C - SEM
